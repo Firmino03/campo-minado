@@ -1,118 +1,151 @@
 <script lang="ts">
-    import { goto } from '$app/navigation'    
-    
-    // tipo para guardar as coordenadas do personagem e do objetivo
+    import { goto } from '$app/navigation'
+
     class Coordenada {
-        linha : number
-        coluna : number
+        linha: number
+        coluna: number
     }
 
-    // representa estado do jogo, contendo o mapa e a locação do personagem e do objetivo 
     class EstadoJogo {
-        posicaoPersonagem : Coordenada
-        posicaoObjetivo : Coordenada
-        mapa : number[][]
+        mapa: number[][]     // 0 = vazio, 9 = mina
+        revelado: boolean[][] // células reveladas
     }
 
-    // cria o estado do jogo
-    function inicializarJogo() : EstadoJogo {
-        let personagem : Coordenada = new Coordenada()
-        personagem.linha = 0
-        personagem.coluna = 0
+    const LINHAS = 10
+    const COLUNAS = 10
+    const NUM_MINAS = 15
 
-        let objetivo : Coordenada = new Coordenada()
-        objetivo.linha = 9
-        objetivo.coluna = 9
+    // ---------- FUNÇÕES DO CAMPO MINADO ---------- //
 
-        let mapa : number[][] = [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 1, 1, 1, 1, 0, 0, 0],
-            [0, 0, 0, 1, 0, 0, 1, 0, 0, 0],
-            [0, 0, 0, 1, 0, 0, 1, 0, 0, 0],
-            [0, 0, 0, 1, 0, 0, 1, 0, 0, 0],
-            [0, 0, 0, 1, 0, 0, 1, 0, 0, 0],
-            [0, 0, 0, 1, 1, 1, 1, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        ]
+    function inicializarJogo(): EstadoJogo {
+        let mapa = gerarMapaVazio(LINHAS, COLUNAS)
+        espalharMinas(mapa, NUM_MINAS)
+        gerarNumeros(mapa)
 
-        let estado : EstadoJogo = new EstadoJogo()
-        estado.posicaoPersonagem = personagem
-        estado.posicaoObjetivo = objetivo
-        estado.mapa = mapa
+        let revelado = gerarMapaRevelado(LINHAS, COLUNAS)
 
-        return estado;
+        let jogo = new EstadoJogo()
+        jogo.mapa = mapa
+        jogo.revelado = revelado
+        
+        return jogo
     }
 
-    // detecta quando o personagem faz um movimento inválido 
-    function houveColisao(posicao : Coordenada, jogo : EstadoJogo) : boolean {
-        return (posicao.linha < 0 || posicao.coluna < 0)
-            || (posicao.linha >= jogo.mapa.length || posicao.coluna >= jogo.mapa[0].length)
-            || jogo.mapa[posicao.linha][posicao.coluna] == 1
+    function gerarMapaVazio(l: number, c: number): number[][] {
+        return Array.from({ length: l }, () => Array(c).fill(0))
     }
 
-    // trata o evento de pressionar as setas no teclado
-    function onKeyDown(evento) : void {
-        let novaPosicao = new Coordenada()
-        novaPosicao.linha = jogo.posicaoPersonagem.linha
-        novaPosicao.coluna = jogo.posicaoPersonagem.coluna
+    function gerarMapaRevelado(l: number, c: number): boolean[][] {
+        return Array.from({ length: l }, () => Array(c).fill(false))
+    }
 
-        switch(evento.keyCode) {
-            case 38: // up
-                novaPosicao.linha--
-                break;
-            case 40: // down
-                novaPosicao.linha++
-                break;
-            case 37: // left
-                novaPosicao.coluna--
-                break;
-            case 39: // right
-                novaPosicao.coluna++
-                break;
+    function espalharMinas(mapa: number[][], quant: number) {
+        let colocadas = 0
+        while (colocadas < quant) {
+            const i = Math.floor(Math.random() * mapa.length)
+            const j = Math.floor(Math.random() * mapa[0].length)
+
+            if (mapa[i][j] !== 9) {
+                mapa[i][j] = 9
+                colocadas++
+            }
         }
+    }
 
-        // CHECAGEM DE OBJETIVO (OBS: isso tinha erro no seu código!)
-        if (
-            novaPosicao.linha == jogo.posicaoObjetivo.linha &&
-            novaPosicao.coluna == jogo.posicaoObjetivo.coluna   // <- corrigido
-        ) {
-            alert("Parabéns, você chegou ao objetivo")
+    function gerarNumeros(mapa: number[][]) {
+        for (let i = 0; i < mapa.length; i++) {
+            for (let j = 0; j < mapa[0].length; j++) {
+                if (mapa[i][j] === 9) continue
+
+                let cont = 0
+                for (let x = -1; x <= 1; x++) {
+                    for (let y = -1; y <= 1; y++) {
+                        let ni = i + x
+                        let nj = j + y
+                        if (
+                            ni >= 0 && nj >= 0 &&
+                            ni < mapa.length && nj < mapa[0].length &&
+                            mapa[ni][nj] === 9
+                        ) cont++
+                    }
+                }
+                mapa[i][j] = cont
+            }
+        }
+    }
+
+    // Revelar célula
+    function revelar(i: number, j: number) {
+        if (jogo.revelado[i][j]) return
+        jogo.revelado[i][j] = true
+
+        // clicou em mina
+        if (jogo.mapa[i][j] === 9) {
+            alert("💥 Você explodiu!")
             goto("/")
         }
 
-        if (!houveColisao(novaPosicao, jogo)) {
-            jogo.posicaoPersonagem = novaPosicao
+        // se for zero, revela vizinhos automaticamente
+        if (jogo.mapa[i][j] === 0) {
+            revelarVizinhos(i, j)
+        }
+
+        checarVitoria()
+    }
+
+    function revelarVizinhos(i: number, j: number) {
+        for (let x = -1; x <= 1; x++) {
+            for (let y = -1; y <= 1; y++) {
+                let ni = i + x
+                let nj = j + y
+
+                if (ni >= 0 && nj >= 0 && ni < LINHAS && nj < COLUNAS) {
+                    if (!jogo.revelado[ni][nj] && jogo.mapa[ni][nj] !== 9) {
+                        revelar(ni, nj)
+                    }
+                }
+            }
         }
     }
 
-    // cria o objeto contendo o estado do jogo
-    let jogo : EstadoJogo = inicializarJogo()
+    function checarVitoria() {
+        for (let i = 0; i < LINHAS; i++) {
+            for (let j = 0; j < COLUNAS; j++) {
+                if (jogo.mapa[i][j] !== 9 && !jogo.revelado[i][j]) {
+                    return
+                }
+            }
+        }
+        alert("🎉 Você venceu!")
+        goto("/")
+    }
+
+    let jogo: EstadoJogo = inicializarJogo()
 </script>
 
 <h1>Campo Minado</h1>
-<h3>descobrir todas as casas seguras sem detonar nenhuma das minas escondidas</h3>
+
 <table>
     {#each jogo.mapa as linha, i}
         <tr>
             {#each linha as celula, j}
-                {#if i == jogo.posicaoPersonagem.linha && j == jogo.posicaoPersonagem.coluna}
-                    <td class="celula personagem"></td>
-                {:else if i == jogo.posicaoObjetivo.linha && j == jogo.posicaoObjetivo.coluna}
-                    <td class="celula objetivo"></td>
-                {:else if jogo.mapa[i][j] == 0}
-                    <td class="celula"></td>
-                {:else}
-                    <td class="celula bloco"></td>
-                {/if}
+                <td
+                    class="celula"
+                    on:click={() => revelar(i, j)}
+                >
+                    {#if jogo.revelado[i][j]}
+                        {celula === 9 ? "💣" : (celula === 0 ? "" : celula)}
+                    {/if}
+                </td>
             {/each}
         </tr>
-    {/each}    
+    {/each}
 </table>
 
 <br />
 
 <a class="menu" href="/">Voltar ao Menu</a>
 
-<svelte:window on:keydown|preventDefault={onKeyDown} />
+
+
+
