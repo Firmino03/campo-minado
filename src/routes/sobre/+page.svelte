@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <h1>Sobre</h1>
 
 <p>Este projeto é uma implementação do clássico jogo Campo Minado, conhecido por desafiar a lógica e a atenção do jogador. O objetivo é revelar todas as casas do tabuleiro que não contêm bombas, usando apenas os números exibidos como pistas — cada número indica quantas bombas existem ao redor daquela posição.</p>
@@ -14,4 +15,17 @@
 
   <a href="https://github.com/Firmino03/campo-minado.git">GitHub</a>
 
+=======
+<h1>Sobre</h1>
+
+<img class="sobre" src="/images/logoIFPE.png" alt="logo IPFE"/>
+
+<p>
+    Autor: Allan Diego Silva Lima
+</p>
+<p>
+  <a href="allan.lima@igarassu.ifpe.edu.br">allan.lima@igarassu.ifpe.edu.br</a>
+</p>
+
+>>>>>>> e62091055934b1453e6567c56b3db20893683e4a
 <a class="menu" href="/">Voltar ao Menu</a>
