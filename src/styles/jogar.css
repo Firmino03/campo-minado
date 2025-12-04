@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 table {
     margin-left: auto;
     margin-right: auto;
@@ -21,15 +21,6 @@ td.personagem {
     cursor: pointer;
 }
 
-td.objetivo {
-    background-color: purple;
-    color: white;
-}
-
-td.bloco {
-    background-color: black;
-    color: white;
-=======
 table {
     margin-left: auto;
     margin-right: auto;
@@ -52,13 +43,4 @@ td.personagem {
     cursor: pointer;
 }
 
-td.objetivo {
-    background-color: purple;
-    color: white;
-}
 
-td.bloco {
-    background-color: black;
-    color: white;
->>>>>>> e62091055934b1453e6567c56b3db20893683e4a
-}

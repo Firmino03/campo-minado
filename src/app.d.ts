@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 declare global {
@@ -12,7 +11,6 @@ declare global {
 }
 
 export {};
-=======
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 declare global {
@@ -26,4 +24,3 @@ declare global {
 }
 
 export {};
->>>>>>> e62091055934b1453e6567c56b3db20893683e4a
