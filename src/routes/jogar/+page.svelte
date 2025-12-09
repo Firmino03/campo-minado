@@ -15,7 +15,6 @@
     const COLUNAS = 10
     const NUM_MINAS = 15
 
-    // ---------- FUNÇÕES DO CAMPO MINADO ---------- //
 
     function inicializarJogo(): EstadoJogo {
         let mapa = gerarMapaVazio(LINHAS, COLUNAS)

@@ -16,8 +16,10 @@
 	<li>Karolayne Firmino</li>
 	<li>Carla Severina</li>
 	<li>Ana Claudia</li>
-	<li>Maria Freitas</li>
+	<li>Maria Luiza</li>
 	<li>Amanda Gabrielly</li>
+	<li>Érika Silva</li>
+
 </ul>
 <p>Curso de Informática Para Internet - IPI</p>
 <a href="https://github.com/Firmino03/campo-minado.git"><strong>Nosso GitHub</strong></a>
