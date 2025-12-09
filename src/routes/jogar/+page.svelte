@@ -123,7 +123,7 @@
     let jogo: EstadoJogo = inicializarJogo()
 </script>
 
-<h1>Campo Minado</h1>
+<h1>💣Tente não explodir💣</h1>
 
 <table>
     {#each jogo.mapa as linha, i}
