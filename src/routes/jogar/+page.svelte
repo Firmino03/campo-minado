@@ -1,150 +1,227 @@
-<script lang="ts">
-    import { goto } from '$app/navigation'
+<script>
+    import { onMount } from 'svelte';
 
-    class Coordenada {
-        linha: number
-        coluna: number
+    const TOTAL_LINHAS = 10;
+    const TOTAL_COLUNAS = 10;
+    const TOTAL_MINAS = 15;
+
+    let nomeJogador = '';
+    let jogoIniciado = false;
+
+    let fimDeJogo = false;
+    let resultadoJogo = null;
+
+    let pontuacao = 0;
+    let ranking = [];
+
+    function criarJogo() {
+        const tabuleiro = criarTabuleiroVazio(TOTAL_LINHAS, TOTAL_COLUNAS);
+        posicionarMinas(tabuleiro, TOTAL_MINAS);
+        calcularNumeros(tabuleiro);
+
+        const celulasReveladas = criarMapaRevelado(TOTAL_LINHAS, TOTAL_COLUNAS);
+
+        pontuacao = 0;
+
+        return { tabuleiro, celulasReveladas };
     }
 
-    class EstadoJogo {
-        mapa: number[][]     // 0 = vazio, 9 = mina
-        revelado: boolean[][] // células reveladas
+    function criarTabuleiroVazio(linhas, colunas) {
+        return Array.from({ length: linhas }, () => Array(colunas).fill(0));
     }
 
-    const LINHAS = 10
-    const COLUNAS = 10
-    const NUM_MINAS = 15
-
-
-    function inicializarJogo(): EstadoJogo {
-        let mapa = gerarMapaVazio(LINHAS, COLUNAS)
-        espalharMinas(mapa, NUM_MINAS)
-        gerarNumeros(mapa)
-
-        let revelado = gerarMapaRevelado(LINHAS, COLUNAS)
-
-        let jogo = new EstadoJogo()
-        jogo.mapa = mapa
-        jogo.revelado = revelado
-        
-        return jogo
+    function criarMapaRevelado(linhas, colunas) {
+        return Array.from({ length: linhas }, () => Array(colunas).fill(false));
     }
 
-    function gerarMapaVazio(l: number, c: number): number[][] {
-        return Array.from({ length: l }, () => Array(c).fill(0))
-    }
+    function posicionarMinas(tabuleiro, quantidadeMinas) {
+        let minasColocadas = 0;
 
-    function gerarMapaRevelado(l: number, c: number): boolean[][] {
-        return Array.from({ length: l }, () => Array(c).fill(false))
-    }
+        while (minasColocadas < quantidadeMinas) {
+            const linhaAleatoria = Math.floor(Math.random() * tabuleiro.length);
+            const colunaAleatoria = Math.floor(Math.random() * tabuleiro[0].length);
 
-    function espalharMinas(mapa: number[][], quant: number) {
-        let colocadas = 0
-        while (colocadas < quant) {
-            const i = Math.floor(Math.random() * mapa.length)
-            const j = Math.floor(Math.random() * mapa[0].length)
-
-            if (mapa[i][j] !== 9) {
-                mapa[i][j] = 9
-                colocadas++
+            if (tabuleiro[linhaAleatoria][colunaAleatoria] !== 9) {
+                tabuleiro[linhaAleatoria][colunaAleatoria] = 9;
+                minasColocadas++;
             }
         }
     }
 
-    function gerarNumeros(mapa: number[][]) {
-        for (let i = 0; i < mapa.length; i++) {
-            for (let j = 0; j < mapa[0].length; j++) {
-                if (mapa[i][j] === 9) continue
+    function calcularNumeros(tabuleiro) {
+        for (let linha = 0; linha < tabuleiro.length; linha++) {
+            for (let coluna = 0; coluna < tabuleiro[0].length; coluna++) {
+                if (tabuleiro[linha][coluna] === 9) continue;
 
-                let cont = 0
-                for (let x = -1; x <= 1; x++) {
-                    for (let y = -1; y <= 1; y++) {
-                        let ni = i + x
-                        let nj = j + y
+                let minasAoRedor = 0;
+
+                for (let dLinha = -1; dLinha <= 1; dLinha++) {
+                    for (let dColuna = -1; dColuna <= 1; dColuna++) {
+                        const linhaVizinha = linha + dLinha;
+                        const colunaVizinha = coluna + dColuna;
+
                         if (
-                            ni >= 0 && nj >= 0 &&
-                            ni < mapa.length && nj < mapa[0].length &&
-                            mapa[ni][nj] === 9
-                        ) cont++
+                            linhaVizinha >= 0 &&
+                            colunaVizinha >= 0 &&
+                            linhaVizinha < tabuleiro.length &&
+                            colunaVizinha < tabuleiro[0].length &&
+                            tabuleiro[linhaVizinha][colunaVizinha] === 9
+                        ) {
+                            minasAoRedor++;
+                        }
                     }
                 }
-                mapa[i][j] = cont
+
+                tabuleiro[linha][coluna] = minasAoRedor;
             }
         }
     }
 
-    // Revelar célula
-    function revelar(i: number, j: number) {
-        if (jogo.revelado[i][j]) return
-        jogo.revelado[i][j] = true
+    function revelarCelula(linha, coluna) {
+        if (fimDeJogo) return;
+        if (jogo.celulasReveladas[linha][coluna]) return;
 
-        // clicou em mina
-        if (jogo.mapa[i][j] === 9) {
-            alert("💥 Você explodiu!")
-            goto("/")
+        jogo.celulasReveladas[linha][coluna] = true;
+
+        if (jogo.tabuleiro[linha][coluna] === 9) {
+            fimDeJogo = true;
+            resultadoJogo = 'derrota';
+            salvarRanking();
+            return;
         }
 
-        // se for zero, revela vizinhos automaticamente
-        if (jogo.mapa[i][j] === 0) {
-            revelarVizinhos(i, j)
+        pontuacao++;
+
+        if (jogo.tabuleiro[linha][coluna] === 0) {
+            revelarCelulasVizinhas(linha, coluna);
         }
 
-        checarVitoria()
+        verificarVitoria();
     }
 
-    function revelarVizinhos(i: number, j: number) {
-        for (let x = -1; x <= 1; x++) {
-            for (let y = -1; y <= 1; y++) {
-                let ni = i + x
-                let nj = j + y
+    function revelarCelulasVizinhas(linhaCentral, colunaCentral) {
+        for (let dLinha = -1; dLinha <= 1; dLinha++) {
+            for (let dColuna = -1; dColuna <= 1; dColuna++) {
+                const linhaVizinha = linhaCentral + dLinha;
+                const colunaVizinha = colunaCentral + dColuna;
 
-                if (ni >= 0 && nj >= 0 && ni < LINHAS && nj < COLUNAS) {
-                    if (!jogo.revelado[ni][nj] && jogo.mapa[ni][nj] !== 9) {
-                        revelar(ni, nj)
-                    }
+                if (
+                    linhaVizinha >= 0 &&
+                    colunaVizinha >= 0 &&
+                    linhaVizinha < TOTAL_LINHAS &&
+                    colunaVizinha < TOTAL_COLUNAS &&
+                    !jogo.celulasReveladas[linhaVizinha][colunaVizinha] &&
+                    jogo.tabuleiro[linhaVizinha][colunaVizinha] !== 9
+                ) {
+                    revelarCelula(linhaVizinha, colunaVizinha);
                 }
             }
         }
     }
 
-    function checarVitoria() {
-        for (let i = 0; i < LINHAS; i++) {
-            for (let j = 0; j < COLUNAS; j++) {
-                if (jogo.mapa[i][j] !== 9 && !jogo.revelado[i][j]) {
-                    return
+    function verificarVitoria() {
+        for (let linha = 0; linha < TOTAL_LINHAS; linha++) {
+            for (let coluna = 0; coluna < TOTAL_COLUNAS; coluna++) {
+                if (
+                    jogo.tabuleiro[linha][coluna] !== 9 &&
+                    !jogo.celulasReveladas[linha][coluna]
+                ) {
+                    return;
                 }
             }
         }
-        alert("🎉 Você venceu!")
-        goto("/")
+
+        fimDeJogo = true;
+        resultadoJogo = 'vitoria';
+        salvarRanking();
     }
 
-    let jogo: EstadoJogo = inicializarJogo()
+    function salvarRanking() {
+        const novoRegistro = {
+            nome: nomeJogador,
+            pontos: pontuacao
+        };
+
+        ranking.push(novoRegistro);
+        ranking.sort((a, b) => b.pontos - a.pontos);
+        ranking = ranking.slice(0, 3);
+
+        localStorage.setItem('ranking-campo-minado', JSON.stringify(ranking));
+    }
+
+    function iniciarJogo() {
+        if (!nomeJogador.trim()) return;
+        jogo = criarJogo();
+        jogoIniciado = true;
+    }
+
+    onMount(() => {
+        const dados = localStorage.getItem('ranking-campo-minado');
+        if (dados) ranking = JSON.parse(dados);
+    });
+
+    let jogo = criarJogo();
 </script>
 
-<h1>💣Tente não explodir💣</h1>
+<h1>💣 Tente não explodir 💣</h1>
 
-<table>
-    {#each jogo.mapa as linha, i}
-        <tr>
-            {#each linha as celula, j}
-                <td
-                    class="celula"
-                    on:click={() => revelar(i, j)}
-                >
-                    {#if jogo.revelado[i][j]}
-                        {celula === 9 ? "💣" : (celula === 0 ? "" : celula)}
-                    {/if}
-                </td>
-            {/each}
-        </tr>
-    {/each}
-</table>
+{#if !jogoIniciado}
+    <div class="container-inicio">
+        <div class="card-inicio-jogo">
+            <h2 class="titulo-fim">Digite seu nome</h2>
 
-<br />
+            <input
+                class="input-nome"
+                placeholder="Seu nome"
+                bind:value={nomeJogador}
+            />
 
-<a class="menu" href="/">Voltar ao Menu</a>
+            <button class="botao-menu" on:click={iniciarJogo}>
+                Iniciar jogo
+            </button>
+        </div>
+    </div>
+{:else}
+    <table>
+        {#each jogo.tabuleiro as linhaTabuleiro, linha}
+            <tr>
+                {#each linhaTabuleiro as celula, coluna}
+                    <td
+                        class="celula"
+                        on:click={() => revelarCelula(linha, coluna)}
+                    >
+                        {#if jogo.celulasReveladas[linha][coluna]}
+                            {celula === 9 ? "💣" : celula === 0 ? "" : celula}
+                        {/if}
+                    </td>
+                {/each}
+            </tr>
+        {/each}
+    </table>
+{/if}
+
+{#if fimDeJogo}
+    <div class="overlay">
+        <div class="card-inicio-jogo">
+            <h2 class="titulo-fim">
+                {resultadoJogo === 'derrota'
+                    ? '💥 Você explodiu!'
+                    : '🎉 Você venceu!'}
+            </h2>
+
+            <p class="texto-fim">Ranking</p>
+
+                <ul class="ranking">
+            {#each ranking as jogador, index}
+            <li>
+            <strong>{index + 1}º</strong> — {jogador.nome}
+            ({jogador.pontos} pontos)
+            </li>
+        {/each}
+        </ul>
 
 
-
-
+            <a class="botao-menu" href="/">Voltar ao Menu</a>
+        </div>
+    </div>
+{/if}
