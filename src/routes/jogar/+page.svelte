@@ -20,7 +20,6 @@
         calcularNumeros(tabuleiro);
 
         const celulasReveladas = criarMapaRevelado(TOTAL_LINHAS, TOTAL_COLUNAS);
-
         pontuacao = 0;
 
         return { tabuleiro, celulasReveladas };
@@ -38,52 +37,52 @@
         let minasColocadas = 0;
 
         while (minasColocadas < quantidadeMinas) {
-            const linhaAleatoria = Math.floor(Math.random() * tabuleiro.length);
-            const colunaAleatoria = Math.floor(Math.random() * tabuleiro[0].length);
+            const l = Math.floor(Math.random() * tabuleiro.length);
+            const c = Math.floor(Math.random() * tabuleiro[0].length);
 
-            if (tabuleiro[linhaAleatoria][colunaAleatoria] !== 9) {
-                tabuleiro[linhaAleatoria][colunaAleatoria] = 9;
+            if (tabuleiro[l][c] !== 9) {
+                tabuleiro[l][c] = 9;
                 minasColocadas++;
             }
         }
     }
 
     function calcularNumeros(tabuleiro) {
-        for (let linha = 0; linha < tabuleiro.length; linha++) {
-            for (let coluna = 0; coluna < tabuleiro[0].length; coluna++) {
-                if (tabuleiro[linha][coluna] === 9) continue;
+        for (let l = 0; l < tabuleiro.length; l++) {
+            for (let c = 0; c < tabuleiro[0].length; c++) {
+                if (tabuleiro[l][c] === 9) continue;
 
-                let minasAoRedor = 0;
+                let minas = 0;
 
-                for (let dLinha = -1; dLinha <= 1; dLinha++) {
-                    for (let dColuna = -1; dColuna <= 1; dColuna++) {
-                        const linhaVizinha = linha + dLinha;
-                        const colunaVizinha = coluna + dColuna;
+                for (let dl = -1; dl <= 1; dl++) {
+                    for (let dc = -1; dc <= 1; dc++) {
+                        const nl = l + dl;
+                        const nc = c + dc;
 
                         if (
-                            linhaVizinha >= 0 &&
-                            colunaVizinha >= 0 &&
-                            linhaVizinha < tabuleiro.length &&
-                            colunaVizinha < tabuleiro[0].length &&
-                            tabuleiro[linhaVizinha][colunaVizinha] === 9
+                            nl >= 0 &&
+                            nc >= 0 &&
+                            nl < tabuleiro.length &&
+                            nc < tabuleiro[0].length &&
+                            tabuleiro[nl][nc] === 9
                         ) {
-                            minasAoRedor++;
+                            minas++;
                         }
                     }
                 }
 
-                tabuleiro[linha][coluna] = minasAoRedor;
+                tabuleiro[l][c] = minas;
             }
         }
     }
 
-    function revelarCelula(linha, coluna) {
+    function revelarCelula(l, c) {
         if (fimDeJogo) return;
-        if (jogo.celulasReveladas[linha][coluna]) return;
+        if (jogo.celulasReveladas[l][c]) return;
 
-        jogo.celulasReveladas[linha][coluna] = true;
+        jogo.celulasReveladas[l][c] = true;
 
-        if (jogo.tabuleiro[linha][coluna] === 9) {
+        if (jogo.tabuleiro[l][c] === 9) {
             fimDeJogo = true;
             resultadoJogo = 'derrota';
             salvarRanking();
@@ -92,42 +91,40 @@
 
         pontuacao++;
 
-        if (jogo.tabuleiro[linha][coluna] === 0) {
-            revelarCelulasVizinhas(linha, coluna);
+        if (jogo.tabuleiro[l][c] === 0) {
+            revelarVizinhas(l, c);
         }
 
         verificarVitoria();
     }
 
-    function revelarCelulasVizinhas(linhaCentral, colunaCentral) {
-        for (let dLinha = -1; dLinha <= 1; dLinha++) {
-            for (let dColuna = -1; dColuna <= 1; dColuna++) {
-                const linhaVizinha = linhaCentral + dLinha;
-                const colunaVizinha = colunaCentral + dColuna;
+    function revelarVizinhas(l, c) {
+        for (let dl = -1; dl <= 1; dl++) {
+            for (let dc = -1; dc <= 1; dc++) {
+                const nl = l + dl;
+                const nc = c + dc;
 
                 if (
-                    linhaVizinha >= 0 &&
-                    colunaVizinha >= 0 &&
-                    linhaVizinha < TOTAL_LINHAS &&
-                    colunaVizinha < TOTAL_COLUNAS &&
-                    !jogo.celulasReveladas[linhaVizinha][colunaVizinha] &&
-                    jogo.tabuleiro[linhaVizinha][colunaVizinha] !== 9
+                    nl >= 0 &&
+                    nc >= 0 &&
+                    nl < TOTAL_LINHAS &&
+                    nc < TOTAL_COLUNAS &&
+                    !jogo.celulasReveladas[nl][nc] &&
+                    jogo.tabuleiro[nl][nc] !== 9
                 ) {
-                    revelarCelula(linhaVizinha, colunaVizinha);
+                    revelarCelula(nl, nc);
                 }
             }
         }
     }
 
     function verificarVitoria() {
-        for (let linha = 0; linha < TOTAL_LINHAS; linha++) {
-            for (let coluna = 0; coluna < TOTAL_COLUNAS; coluna++) {
+        for (let l = 0; l < TOTAL_LINHAS; l++) {
+            for (let c = 0; c < TOTAL_COLUNAS; c++) {
                 if (
-                    jogo.tabuleiro[linha][coluna] !== 9 &&
-                    !jogo.celulasReveladas[linha][coluna]
-                ) {
-                    return;
-                }
+                    jogo.tabuleiro[l][c] !== 9 &&
+                    !jogo.celulasReveladas[l][c]
+                ) return;
             }
         }
 
@@ -137,15 +134,9 @@
     }
 
     function salvarRanking() {
-        const novoRegistro = {
-            nome: nomeJogador,
-            pontos: pontuacao
-        };
-
-        ranking.push(novoRegistro);
+        ranking.push({ nome: nomeJogador, pontos: pontuacao });
         ranking.sort((a, b) => b.pontos - a.pontos);
         ranking = ranking.slice(0, 3);
-
         localStorage.setItem('ranking-campo-minado', JSON.stringify(ranking));
     }
 
@@ -163,10 +154,14 @@
     let jogo = criarJogo();
 </script>
 
-<h1>💣 Tente não explodir 💣</h1>
+<!-- =======================
+     TELA DO JOGO
+     ======================= -->
+<div class="tela-jogo">
+    <h1 class="titulo-jogo">💣 Tente não explodir 💣</h1>
 
-{#if !jogoIniciado}
-    <div class="container-inicio">
+    {#if !jogoIniciado}
+        <!-- CARD INÍCIO -->
         <div class="card-inicio-jogo">
             <h2 class="titulo-fim">Digite seu nome</h2>
 
@@ -176,52 +171,59 @@
                 bind:value={nomeJogador}
             />
 
-            <button class="botao-menu" on:click={iniciarJogo}>
+            <button class="button" on:click={iniciarJogo}>
                 Iniciar jogo
             </button>
         </div>
-    </div>
-{:else}
-    <table>
-        {#each jogo.tabuleiro as linhaTabuleiro, linha}
-            <tr>
-                {#each linhaTabuleiro as celula, coluna}
-                    <td
-                        class="celula"
-                        on:click={() => revelarCelula(linha, coluna)}
-                    >
-                        {#if jogo.celulasReveladas[linha][coluna]}
-                            {celula === 9 ? "💣" : celula === 0 ? "" : celula}
-                        {/if}
-                    </td>
-                {/each}
-            </tr>
-        {/each}
-    </table>
-{/if}
 
+    {:else}
+        <!-- TABULEIRO -->
+        <div class="tabuleiro">
+            <table>
+                {#each jogo.tabuleiro as linhaTabuleiro, l}
+                    <tr>
+                        {#each linhaTabuleiro as celula, c}
+                            <td
+                                class="celula {jogo.celulasReveladas[l][c] ? 'revelada' : ''}"
+                                on:click={() => revelarCelula(l, c)}
+                            >
+                                {#if jogo.celulasReveladas[l][c]}
+                                    {celula === 9 ? "💣" : celula || ""}
+                                {/if}
+                            </td>
+                        {/each}
+                    </tr>
+                {/each}
+            </table>
+        </div>
+    {/if}
+</div>
+
+<!-- =======================
+     OVERLAY FIM DE JOGO
+     ======================= -->
 {#if fimDeJogo}
     <div class="overlay">
-        <div class="card-inicio-jogo">
-            <h2 class="titulo-fim">
+        <!-- 👇 CARD COM AJUSTE FINO -->
+        <div class="card card-derrota">
+            <h2>
                 {resultadoJogo === 'derrota'
                     ? '💥 Você explodiu!'
                     : '🎉 Você venceu!'}
             </h2>
 
-            <p class="texto-fim">Ranking</p>
+            <!-- 👇 LISTA CENTRALIZADA -->
+            <ul class="lista-ganhadores">
+                {#each ranking as j, i}
+                    <li>
+                        <strong>{i + 1}º</strong> — {j.nome} ({j.pontos})
+                    </li>
+                {/each}
+            </ul>
 
-                <ul class="ranking">
-            {#each ranking as jogador, index}
-            <li>
-            <strong>{index + 1}º</strong> — {jogador.nome}
-            ({jogador.pontos} pontos)
-            </li>
-        {/each}
-        </ul>
-
-
-            <a class="botao-menu" href="/">Voltar ao Menu</a>
+            <a class="button link-reset" href="/">
+                Voltar ao Menu
+            </a>
         </div>
     </div>
 {/if}

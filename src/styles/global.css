@@ -3,102 +3,162 @@
    ============================ */
 
 html, body {
-    position: relative;
     width: 100%;
     height: 100%;
 }
 
 body {
-    color: #000000;
     margin: 0;
-    padding: 8px;
-    box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
     background-color: rgb(236, 159, 233);
     text-align: center;
 }
 
 /* ============================
-   TÍTULOS
+   CONTAINER HOME (CENTRO)
+   ============================ */
+
+.home-container {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+}
+
+/* ============================
+   TÍTULO
    ============================ */
 
 h1 {
-    color: black;
-    font-weight: bold;
     font-family: verdana;
-}
-
-/* ============================
-   BOTÕES DO MENU
-   ============================ */
-
-.menu {
-    display: block;
-    font-size: 20px;
-    margin: auto;
+    font-weight: bold;
     margin-bottom: 10px;
-    width: 20%;
-    padding: 10px;
-    background-color: rgb(245, 160, 242);
-    border: 3px solid black;
-    text-align: center;
+}
+
+/* ============================
+   RESET LINK
+   ============================ */
+
+.link-reset {
     text-decoration: none;
-    color: black;
-    border-radius: 6px;
-    transition: 0.2s;
-    z-index: 10; /* garante que fica acima da chuva */
+}
+
+/* ============================
+   BOTÃO ANIMADO (Uiverse)
+   ============================ */
+
+.button {
     position: relative;
+    padding: 14px 36px;      /* ⬅ botão mais alto e largo */
+    min-width: 220px;        /* ⬅ largura mínima */
+    border-radius: 8px;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    background-color: #7d2ae8;
+    font-size: 20px;         /* ⬅ texto maior */
+    font-weight: 500;
+    transition: all 0.2s ease;
+    z-index: 10;
 }
 
-.menu:hover {
-    background-color: rgb(17, 202, 78);
+
+.button:active {
+    transform: scale(0.96);
 }
 
-.menu:visited {
-    color: black;
+.button:before,
+.button:after {
+    position: absolute;
+    content: "";
+    width: 150%;
+    left: 50%;
+    height: 100%;
+    transform: translateX(-50%);
+    z-index: -1;
+    background-repeat: no-repeat;
+}
+
+/* --- bolhas superiores --- */
+
+.button:hover:before {
+    top: -70%;
+    background-image:
+        radial-gradient(circle, #7d2ae8 20%, transparent 20%),
+        radial-gradient(circle, transparent 20%, #7d2ae8 20%, transparent 30%),
+        radial-gradient(circle, #7d2ae8 20%, transparent 20%),
+        radial-gradient(circle, #7d2ae8 20%, transparent 20%),
+        radial-gradient(circle, transparent 10%, #7d2ae8 15%, transparent 20%),
+        radial-gradient(circle, #7d2ae8 20%, transparent 20%),
+        radial-gradient(circle, #7d2ae8 20%, transparent 20%),
+        radial-gradient(circle, #7d2ae8 20%, transparent 20%),
+        radial-gradient(circle, #7d2ae8 20%, transparent 20%);
+    background-size:
+        10% 10%, 20% 20%, 15% 15%, 20% 20%, 18% 18%,
+        10% 10%, 15% 15%, 10% 10%, 18% 18%;
+    background-position: 50% 120%;
+    animation: greentopBubbles 0.6s ease;
+}
+
+@keyframes greentopBubbles {
+    0% {
+        background-position: 5% 90%, 10% 90%, 10% 90%, 15% 90%, 25% 90%,
+            25% 90%, 40% 90%, 55% 90%, 70% 90%;
+    }
+    50% {
+        background-position: 0% 80%, 0% 20%, 10% 40%, 20% 0%, 30% 30%,
+            22% 50%, 50% 50%, 65% 20%, 90% 30%;
+    }
+    100% {
+        background-position: 0% 70%, 0% 10%, 10% 30%, 20% -10%, 30% 20%,
+            22% 40%, 50% 40%, 65% 10%, 90% 20%;
+        background-size: 0% 0%;
+    }
+}
+
+/* --- bolhas inferiores --- */
+
+.button:hover::after {
+    bottom: -70%;
+    background-image:
+        radial-gradient(circle, #7d2ae8 20%, transparent 20%),
+        radial-gradient(circle, #7d2ae8 20%, transparent 20%),
+        radial-gradient(circle, transparent 10%, #7d2ae8 15%, transparent 20%),
+        radial-gradient(circle, #7d2ae8 20%, transparent 20%),
+        radial-gradient(circle, #7d2ae8 20%, transparent 20%),
+        radial-gradient(circle, #7d2ae8 20%, transparent 20%),
+        radial-gradient(circle, #7d2ae8 20%, transparent 20%);
+    background-size:
+        15% 15%, 20% 20%, 18% 18%, 20% 20%,
+        15% 15%, 20% 20%, 18% 18%;
+    background-position: 50% 0%;
+    animation: greenbottomBubbles 0.6s ease;
+}
+
+@keyframes greenbottomBubbles {
+    0% {
+        background-position: 10% -10%, 30% 10%, 55% -10%, 70% -10%,
+            85% -10%, 70% -10%, 70% 0%;
+    }
+    50% {
+        background-position: 0% 80%, 20% 80%, 45% 60%, 60% 100%,
+            75% 70%, 95% 60%, 105% 0%;
+    }
+    100% {
+        background-position: 0% 90%, 20% 90%, 45% 70%, 60% 110%,
+            75% 80%, 95% 70%, 110% 10%;
+        background-size: 0% 0%;
+    }
 }
 
 /* ============================
-   IMAGEM SOBRE
-   ============================ */
-
-img.sobre {
-    max-width: 10%;
-    max-height: 10%;
-}
-
-/* ============================
-   LISTA DE DESENVOLVEDORES
-   ============================ */
-
-.lista-devs {
-    list-style: none;
-    padding: 0;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.lista-devs li {
-    margin: 4px 0;
-    font-size: 18px;
-}
-
-/* ============================
-   TEXTO SOBRE
-   ============================ */
-
-.sobre-texto {
-    font-size: 18px;
-    line-height: 1.4;
-    margin: 10px 0;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-}
-
-/* ============================
-   CHUVA DE NÚMEROS (EFEITO)
+   CHUVA
    ============================ */
 
 .rain-container {
@@ -109,19 +169,18 @@ img.sobre {
     height: 100%;
     overflow: hidden;
     pointer-events: none;
-    z-index: 0; /* sempre atrás do conteúdo */
-    opacity: 0.6;
+    z-index: 0;
+    opacity: 1.75; /* ⬅ chuva mais visível */
 }
-
 .drop {
     position: absolute;
     top: -50px;
-    font-size: 1.5rem;
+    font-size: 2rem;        /* ⬅ números maiores */
     font-weight: bold;
+    font-family: "Courier New", monospace;
+    color: rgb(255, 255, 255); /* ⬅ mais suaves, estilo cascata */
     animation: fall linear infinite;
-    color: rgb(0, 0, 0);
 }
-
 @keyframes fall {
     0% {
         transform: translateY(-50px);
@@ -137,12 +196,257 @@ img.sobre {
         opacity: 0;
     }
 }
-
 /* ============================
-   CONTAINERS DE PÁGINA
+   CONTAINER SOBRE
    ============================ */
 
-.home-container {
+.sobre-container {
+    min-height: 100vh;
+    padding: 40px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+/* ============================
+   TÍTULO
+   ============================ */
+
+.sobre-container h1 {
+    font-family: Verdana, sans-serif;
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+/* ============================
+   CARD / GRID
+   ============================ */
+
+.card {
+    background-color: #ffffff;
+    border: 3px solid #7d2ae8;
+    border-radius: 16px;
+    padding: 8px;
+
+    width: 100%;
+    max-width: 720px;      /* ⬅ deixa o card mais largo */
+    min-height: 260px;     /* ⬅ força formato retangular */
+
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+
+    display: flex;         /* ⬅ melhora alinhamento interno */
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+/* ============================
+   LOGO IFPE
+   ============================ */
+
+.sobre-logo {
+    max-width: 150px;
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+/* ============================
+   TEXTO DO CARD
+   ============================ */
+
+.card-text {
+    font-family: Verdana, sans-serif;
+    font-size: 19px;
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+/* ============================
+   LISTA DEVS
+   ============================ */
+
+.card h2 {
+    font-family: Verdana, sans-serif;
+    margin-bottom: 12px;
+}
+
+.lista-devs {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.lista-devs li {
+    font-family: Verdana, sans-serif;
+    font-size: 17px;
+    margin: 4px 0;
+}
+
+.curso {
+    margin-top: 12px;
+    font-family: Verdana, sans-serif;
+    font-size: 18px;
+}
+
+/* ============================
+   BOTÕES
+   ============================ */
+
+.botoes-sobre {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.link-reset {
+    text-decoration: none;
+}
+
+.card-inicio-jogo {
+    background-color: #ffffff;
+    border: 3px solid #7d2ae8;
+    border-radius: 16px;
+    padding: 32px;
+
+    width: 100%;
+    max-width: 770px;
+    min-height: 400px;   /* ⬅ formato retangular */
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+.titulo-jogo {
+    margin-top: 50px;   /* ⬅ empurra para baixo */
+    margin-bottom: 0px;
+}
+
+/* ============================
+   CARD INÍCIO DO JOGO (AJUSTE FINO)
+   ============================ */
+
+.container-inicio {
+    min-height: calc(100vh - 160px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* sobrescreve só no jogo */
+.container-inicio .card-inicio-jogo {
+    max-width: 560px;      /* ⬅ mais largo */
+    min-height: auto;      /* ⬅ remove altura exagerada */
+    padding: 28px 36px;    /* ⬅ menos altura, mais largura */
+    gap: 18px;
+
+    align-items: center;
+}
+
+/* título do card */
+.container-inicio .titulo-fim {
+    font-size: 26px;
+    margin-bottom: 6px;
+}
+
+/* input do nome */
+.container-inicio .input-nome {
+    font-size: 20px;       /* ⬅ letra maior */
+    padding: 14px 16px;
+    border-radius: 10px;
+}
+
+/* botão centralizado */
+.container-inicio .button {
+    margin-top: 6px;
+}
+
+/* ============================
+   TELA DO JOGO (CENTRALIZA TUDO)
+   ============================ */
+
+.tela-jogo {
+    min-height: 100vh;
     position: relative;
-    z-index: 10; /* garante que todo conteúdo do home fica acima da chuva */
+    z-index: 10;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* centro vertical */
+    align-items: center;     /* centro horizontal */
+
+    gap: 32px;
+}
+
+/* título do jogo */
+.tela-jogo .titulo-jogo {
+    margin: 0;
+    font-family: Verdana, sans-serif;
+    font-size: 36px;
+}
+
+/* card de início / overlay */
+.tela-jogo .card-inicio-jogo {
+    max-width: 560px;
+    min-height: auto;
+    padding: 28px 36px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+}
+
+/* input nome */
+.tela-jogo .input-nome {
+    width: 100%;
+    font-size: 20px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 2px solid #7d2ae8;
+}
+/* ============================
+   CARD DERROTA (VOCÊ EXPLODIU)
+   ============================ */
+
+.card-derrota {
+    max-width: 520px;      /* ⬅ diminui largura */
+    padding: 24px 28px;    /* ⬅ menos espaço interno */
+    min-height: auto;      /* ⬅ remove altura forçada */
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+/* ============================
+   LISTA DE GANHADORES
+   ============================ */
+
+.lista-ganhadores {
+    list-style-position: inside;
+    padding: 0;
+    margin: 0 auto;
+
+    text-align: center;     /* ⬅ centraliza números e texto */
+}
+
+.lista-ganhadores li {
+    text-align: center;
+    font-size: 18px;
+    margin: 6px 0;
+}
+.card-derrota h2,
+.card-derrota h1 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 28px;
 }

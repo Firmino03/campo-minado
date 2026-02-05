@@ -1,28 +1,44 @@
-<h1>Sobre</h1>
-<img class="sobre" src="/images/logoIFPE.png" alt="logo IFPE" />
+<main class="sobre-container">
+    <h1>Sobre</h1>
+    <!-- BOTÕES -->
+    <div class="botoes-sobre">
+        <a href="https://github.com/Firmino03/campo-minado.git" target="_blank" class="link-reset">
+            <button class="button">Nosso GitHub</button>
+        </a>
 
-<p class="sobre-texto">
-    Este projeto é uma implementação do clássico jogo Campo Minado, conhecido por desafiar a lógica e a atenção do jogador.
-</p>
+        <a href="/" class="link-reset">
+            <button class="button">Voltar ao Menu</button>
+        </a>
+    </div>
 
-<p class="sobre-texto">
-    O objetivo é revelar todas as casas do tabuleiro que não contêm bombas, usando apenas os números exibidos como pistas —
-    cada número indica quantas bombas existem ao redor daquela posição.
-</p>
+    <!-- GRID SOBRE O PROJETO -->
+    <div class="card">
+        <p class="card-text">
+            Este projeto é uma implementação do clássico jogo Campo Minado, conhecido por desafiar
+            a lógica e a atenção do jogador.
+        </p>
 
-<p><strong>Desenvolvedores:</strong></p>
+        <p class="card-text">
+            O objetivo é revelar todas as casas do tabuleiro que não contêm bombas, usando apenas os
+            números exibidos como pistas — cada número indica quantas bombas existem ao redor daquela posição.
+        </p>
+    </div>
 
-<ul class="lista-devs">
-	<li>Karolayne Firmino</li>
-	<li>Carla Severina</li>
-	<li>Ana Claudia</li>
-	<li>Maria Luiza</li>
-	<li>Amanda Gabrielly</li>
-	<li>Érika Silva</li>
+    <!-- GRID DESENVOLVEDORES -->
+    <div class="card">
+        <h2>Desenvolvedores</h2>
 
-</ul>
-<p>Curso de Informática Para Internet - IPI</p>
-<a href="https://github.com/Firmino03/campo-minado.git"><strong>Nosso GitHub</strong></a>
+        <ul class="lista-devs">
+            <li>Karolayne Firmino</li>
+            <li>Carla Severina</li>
+            <li>Ana Claudia</li>
+            <li>Maria Luiza</li>
+            <li>Amanda Gabrielly</li>
+            <li>Érika Silva</li>
+        </ul>
+	        <img class="sobre-logo" src="/images/logoIFPE.png" alt="Logo IFPE" />
 
-<br /><br />
-<a class="menu" href="/">Voltar ao Menu</a>
+        <p class="curso">Curso de Informática Para Internet – IPI</p>
+    </div>
+
+</main>

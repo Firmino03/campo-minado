@@ -1,106 +1,65 @@
-h1 {
-    text-align: center;
-    margin-top: 30px;
-}
-
-/* CENTRALIZA CARD DE INÍCIO */
-.container-inicio {
-    min-height: calc(100vh - 120px);
+/* TABULEIRO */
+.tabuleiro {
     display: flex;
     justify-content: center;
-    align-items: center;
+    margin-top: 20px;
 }
 
-/* TABULEIRO */
-table {
-    margin: 0 auto;
+.tabuleiro table {
     border-collapse: collapse;
+    border: 5px solid #000;
+    background-color: #000;
 }
 
-td.celula {
-    border: 2px solid black;
+.tabuleiro td.celula {
+    width: 52px;
+    height: 52px;
+
+    background-color: #fff;
+    border: 1.5px solid #000;
+
     text-align: center;
     font-weight: bold;
-    height: 50px;
-    width: 50px;
+    font-size: 1.35rem;
+    font-family: Verdana, sans-serif;
+
     cursor: pointer;
+    user-select: none;
 }
 
-/* OVERLAY FIM DE JOGO */
+.tabuleiro td.celula:hover {
+    background-color: #f2e9f7;
+}
+
+.tabuleiro td.celula.revelada {
+    cursor: default;
+    background-color: #fff;
+}
+
+/* OVERLAY */
 .overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0,0,0,0.6);
     display: flex;
-    align-items: center;
     justify-content: center;
-    z-index: 100;
-}
-
-/* CARD */
-.card-inicio-jogo {
-    background: #ffffff;
-    border: 3px solid #7a2a8a;
-    border-radius: 14px;
-    padding: 20px 25px;
-    width: 320px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-    text-align: center;
-
-    display: flex;
-    flex-direction: column;
     align-items: center;
-        margin-top: -150px; /* 🔼 sobe o card */
-
-}
-
-/* TEXTOS */
-.titulo-fim {
-    color: #7a2a8a;
-    font-size: 1.8rem;
-    margin-bottom: 10px;
-}
-
-.texto-fim {
-    color: #333;
-    margin-bottom: 15px;
-}
-
-/* INPUT */
-.input-nome {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 10px;
-    margin: 15px 0;
-    border-radius: 8px;
-    border: 2px solid #7a2a8a;
-    font-size: 1rem;
-}
-
-/* BOTÃO */
-.botao-menu {
-    background: #7a2a8a;
-    color: #ffffff;
-    padding: 12px 24px;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-}
-
-.botao-menu:hover {
-    background: #9b3db0;
+    z-index: 20;
 }
 
 /* RANKING */
 .ranking {
     text-align: left;
-    margin: 10px 0 20px;
     padding-left: 20px;
-    color: #333;
 }
 
-.ranking li {
-    margin-bottom: 6px;
+/* BOTÃO VOLTAR */
+.botao-menu {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 12px 24px;
+    background: #7a2a8a;
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
 }
