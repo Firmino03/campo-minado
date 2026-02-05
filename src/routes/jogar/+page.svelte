@@ -25,64 +25,70 @@
         return { tabuleiro, celulasReveladas };
     }
 
-    function criarTabuleiroVazio(linhas, colunas) {
-        return Array.from({ length: linhas }, () => Array(colunas).fill(0));
+    function criarTabuleiroVazio(totalLinhas, totalColunas) {
+        return Array.from(
+            { length: totalLinhas },
+            () => Array(totalColunas).fill(0)
+        );
     }
 
-    function criarMapaRevelado(linhas, colunas) {
-        return Array.from({ length: linhas }, () => Array(colunas).fill(false));
+    function criarMapaRevelado(totalLinhas, totalColunas) {
+        return Array.from(
+            { length: totalLinhas },
+            () => Array(totalColunas).fill(false)
+        );
     }
 
     function posicionarMinas(tabuleiro, quantidadeMinas) {
         let minasColocadas = 0;
 
         while (minasColocadas < quantidadeMinas) {
-            const l = Math.floor(Math.random() * tabuleiro.length);
-            const c = Math.floor(Math.random() * tabuleiro[0].length);
+            const linha = Math.floor(Math.random() * tabuleiro.length);
+            const coluna = Math.floor(Math.random() * tabuleiro[0].length);
 
-            if (tabuleiro[l][c] !== 9) {
-                tabuleiro[l][c] = 9;
+            if (tabuleiro[linha][coluna] !== 9) {
+                tabuleiro[linha][coluna] = 9;
                 minasColocadas++;
             }
         }
     }
 
     function calcularNumeros(tabuleiro) {
-        for (let l = 0; l < tabuleiro.length; l++) {
-            for (let c = 0; c < tabuleiro[0].length; c++) {
-                if (tabuleiro[l][c] === 9) continue;
+        for (let linha = 0; linha < tabuleiro.length; linha++) {
+            for (let coluna = 0; coluna < tabuleiro[0].length; coluna++) {
+                if (tabuleiro[linha][coluna] === 9) continue;
 
-                let minas = 0;
+                let minasAdjacentes = 0;
 
-                for (let dl = -1; dl <= 1; dl++) {
-                    for (let dc = -1; dc <= 1; dc++) {
-                        const nl = l + dl;
-                        const nc = c + dc;
+                for (let deltaLinha = -1; deltaLinha <= 1; deltaLinha++) {
+                    for (let deltaColuna = -1; deltaColuna <= 1; deltaColuna++) {
+                        const novaLinha = linha + deltaLinha;
+                        const novaColuna = coluna + deltaColuna;
 
                         if (
-                            nl >= 0 &&
-                            nc >= 0 &&
-                            nl < tabuleiro.length &&
-                            nc < tabuleiro[0].length &&
-                            tabuleiro[nl][nc] === 9
+                            novaLinha >= 0 &&
+                            novaColuna >= 0 &&
+                            novaLinha < tabuleiro.length &&
+                            novaColuna < tabuleiro[0].length &&
+                            tabuleiro[novaLinha][novaColuna] === 9
                         ) {
-                            minas++;
+                            minasAdjacentes++;
                         }
                     }
                 }
 
-                tabuleiro[l][c] = minas;
+                tabuleiro[linha][coluna] = minasAdjacentes;
             }
         }
     }
 
-    function revelarCelula(l, c) {
+    function revelarCelula(linha, coluna) {
         if (fimDeJogo) return;
-        if (jogo.celulasReveladas[l][c]) return;
+        if (jogo.celulasReveladas[linha][coluna]) return;
 
-        jogo.celulasReveladas[l][c] = true;
+        jogo.celulasReveladas[linha][coluna] = true;
 
-        if (jogo.tabuleiro[l][c] === 9) {
+        if (jogo.tabuleiro[linha][coluna] === 9) {
             fimDeJogo = true;
             resultadoJogo = 'derrota';
             salvarRanking();
@@ -91,40 +97,42 @@
 
         pontuacao++;
 
-        if (jogo.tabuleiro[l][c] === 0) {
-            revelarVizinhas(l, c);
+        if (jogo.tabuleiro[linha][coluna] === 0) {
+            revelarVizinhas(linha, coluna);
         }
 
         verificarVitoria();
     }
 
-    function revelarVizinhas(l, c) {
-        for (let dl = -1; dl <= 1; dl++) {
-            for (let dc = -1; dc <= 1; dc++) {
-                const nl = l + dl;
-                const nc = c + dc;
+    function revelarVizinhas(linha, coluna) {
+        for (let deltaLinha = -1; deltaLinha <= 1; deltaLinha++) {
+            for (let deltaColuna = -1; deltaColuna <= 1; deltaColuna++) {
+                const novaLinha = linha + deltaLinha;
+                const novaColuna = coluna + deltaColuna;
 
                 if (
-                    nl >= 0 &&
-                    nc >= 0 &&
-                    nl < TOTAL_LINHAS &&
-                    nc < TOTAL_COLUNAS &&
-                    !jogo.celulasReveladas[nl][nc] &&
-                    jogo.tabuleiro[nl][nc] !== 9
+                    novaLinha >= 0 &&
+                    novaColuna >= 0 &&
+                    novaLinha < TOTAL_LINHAS &&
+                    novaColuna < TOTAL_COLUNAS &&
+                    !jogo.celulasReveladas[novaLinha][novaColuna] &&
+                    jogo.tabuleiro[novaLinha][novaColuna] !== 9
                 ) {
-                    revelarCelula(nl, nc);
+                    revelarCelula(novaLinha, novaColuna);
                 }
             }
         }
     }
 
     function verificarVitoria() {
-        for (let l = 0; l < TOTAL_LINHAS; l++) {
-            for (let c = 0; c < TOTAL_COLUNAS; c++) {
+        for (let linha = 0; linha < TOTAL_LINHAS; linha++) {
+            for (let coluna = 0; coluna < TOTAL_COLUNAS; coluna++) {
                 if (
-                    jogo.tabuleiro[l][c] !== 9 &&
-                    !jogo.celulasReveladas[l][c]
-                ) return;
+                    jogo.tabuleiro[linha][coluna] !== 9 &&
+                    !jogo.celulasReveladas[linha][coluna]
+                ) {
+                    return;
+                }
             }
         }
 
@@ -137,7 +145,10 @@
         ranking.push({ nome: nomeJogador, pontos: pontuacao });
         ranking.sort((a, b) => b.pontos - a.pontos);
         ranking = ranking.slice(0, 3);
-        localStorage.setItem('ranking-campo-minado', JSON.stringify(ranking));
+        localStorage.setItem(
+            'ranking-campo-minado',
+            JSON.stringify(ranking)
+        );
     }
 
     function iniciarJogo() {
@@ -161,7 +172,6 @@
     <h1 class="titulo-jogo">💣 Tente não explodir 💣</h1>
 
     {#if !jogoIniciado}
-        <!-- CARD INÍCIO -->
         <div class="card-inicio-jogo">
             <h2 class="titulo-fim">Digite seu nome</h2>
 
@@ -177,18 +187,19 @@
         </div>
 
     {:else}
-        <!-- TABULEIRO -->
         <div class="tabuleiro">
             <table>
-                {#each jogo.tabuleiro as linhaTabuleiro, l}
+                {#each jogo.tabuleiro as linhaTabuleiro, indiceLinha}
                     <tr>
-                        {#each linhaTabuleiro as celula, c}
+                        {#each linhaTabuleiro as celula, indiceColuna}
                             <td
-                                class="celula {jogo.celulasReveladas[l][c] ? 'revelada' : ''}"
-                                on:click={() => revelarCelula(l, c)}
+                                class="celula {jogo.celulasReveladas[indiceLinha][indiceColuna] ? 'revelada' : ''}"
+                                on:click={() =>
+                                    revelarCelula(indiceLinha, indiceColuna)
+                                }
                             >
-                                {#if jogo.celulasReveladas[l][c]}
-                                    {celula === 9 ? "💣" : celula || ""}
+                                {#if jogo.celulasReveladas[indiceLinha][indiceColuna]}
+                                    {celula === 9 ? '💣' : celula || ''}
                                 {/if}
                             </td>
                         {/each}
@@ -199,12 +210,8 @@
     {/if}
 </div>
 
-<!-- =======================
-     OVERLAY FIM DE JOGO
-     ======================= -->
 {#if fimDeJogo}
     <div class="overlay">
-        <!-- 👇 CARD COM AJUSTE FINO -->
         <div class="card card-derrota">
             <h2>
                 {resultadoJogo === 'derrota'
@@ -212,11 +219,10 @@
                     : '🎉 Você venceu!'}
             </h2>
 
-            <!-- 👇 LISTA CENTRALIZADA -->
             <ul class="lista-ganhadores">
-                {#each ranking as j, i}
+                {#each ranking as jogador, indice}
                     <li>
-                        <strong>{i + 1}º</strong> — {j.nome} ({j.pontos})
+                        <strong>{indice + 1}º</strong> — {jogador.nome} ({jogador.pontos})
                     </li>
                 {/each}
             </ul>
