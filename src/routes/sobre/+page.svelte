@@ -33,7 +33,6 @@
             <li>Carla Severina</li>
             <li>Ana Claudia</li>
             <li>Maria Luiza</li>
-            <li>Amanda Gabrielly</li>
             <li>Érika Silva</li>
         </ul>
 	        <img class="sobre-logo" src="/images/logoIFPE.png" alt="Logo IFPE" />
