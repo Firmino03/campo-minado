@@ -14,13 +14,15 @@
     <!-- GRID SOBRE O PROJETO -->
     <div class="card">
         <p class="card-text">
-            Este projeto é uma implementação do clássico jogo Campo Minado, conhecido por desafiar
-            a lógica e a atenção do jogador.
+            O projeto é um jogo Campo Minado desenvolvido com Svelte, utilizando HTML, CSS e JavaScript. O framework foi utilizado para organizar os componentes e controlar o estado da aplicação de forma reativa.
         </p>
 
         <p class="card-text">
-            O objetivo é revelar todas as casas do tabuleiro que não contêm bombas, usando apenas os
-            números exibidos como pistas — cada número indica quantas bombas existem ao redor daquela posição.
+            A lógica do jogo consiste na geração automática de um tabuleiro com minas distribuídas aleatoriamente. Ao clicar em uma célula, o sistema verifica se há mina ou calcula a quantidade de minas ao redor. Caso não haja minas próximas, as células vizinhas são reveladas automaticamente. O jogador vence ao abrir todas as casas seguras e perde ao clicar em uma mina.
+        </p>
+
+        <p class="card-text">
+            O sistema de ranking foi desenvolvido utilizando Local Storage, permitindo salvar localmente o nome do jogador e seu desempenho, mantendo os dados mesmo após atualizar ou fechar o navegador.
         </p>
     </div>
 
@@ -30,12 +32,9 @@
 
         <ul class="lista-devs">
             <li>Karolayne Firmino</li>
-            <li>Carla Severina</li>
-            <li>Ana Claudia</li>
             <li>Maria Luiza</li>
-            <li>Érika Silva</li>
         </ul>
-	        <img class="sobre-logo" src="/images/logoIFPE.png" alt="Logo IFPE" />
+	        <img class="sobre-logo" src="/images/logooifpe.png" alt="Logo IFPE" />
 
         <p class="curso">Curso de Informática Para Internet – IPI</p>
     </div>
